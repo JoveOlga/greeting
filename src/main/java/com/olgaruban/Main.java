@@ -8,16 +8,18 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 import java.util.logging.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main {
-    public final static LocalTime MORNING_START = LocalTime.of(6, 0,0);
-    public final static LocalTime MORNING_END = LocalTime.of(9, 0,0);
+    public final static String MORNING_START = "06:00:00";
+    public final static String MORNING_END = "09:00:00";
 
-    public final static LocalTime AFTERNOON_START = LocalTime.of(9, 0,0);
-    public final static LocalTime AFTERNOON_END = LocalTime.of(19, 0,0);
+    public final static String AFTERNOON_START = "09:00:00";
+    public final static String AFTERNOON_END = "19:00:00";
 
-    public final static LocalTime EVENING_START = LocalTime.of(19, 0,0);
-    public final static LocalTime EVENING_END = LocalTime.of(23, 0,0);
+    public final static String EVENING_START = "19:00:00";
+    public final static String EVENING_END = "23:00:00";
 
     public final static String MORNING = "morning";
     public final static String AFTERNOON = "afternoon";
@@ -30,8 +32,9 @@ public class Main {
     public static void main(String[] args) {
         initLogger();
 
-        String[] cityAndTimeZone = readData();
-        LocalTime timeNow = determinateUserTime(cityAndTimeZone[0], cityAndTimeZone[1]);
+        String[] cityAndTimeZone = parseArgs(args);
+
+        LocalTime timeNow = LocalTime.now(determinateUserTimeZone(cityAndTimeZone[0], cityAndTimeZone[1]));
 
         printGreeting(timeNow, cityAndTimeZone[0]);
     }
@@ -50,23 +53,40 @@ public class Main {
         }
     }
 
-    public static String[] readData() {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    public static String[] parseArgs(String[] args) {
         String city = "";
         String timeZoneId = "";
-        try {
-            System.out.println("Enter the city name in English, please");
-            city = reader.readLine();
-            System.out.println("Enter your time zone ID, please");
-            timeZoneId = reader.readLine();
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "Exception: ", e);
+
+        if (args.length == 0) {
+            logger.severe("Invalid arguments");
             System.exit(0);
         }
+
+        if (args.length >= 3) {
+            city = args[0] + " " + args[1];
+            timeZoneId = args[2];
+        }
+
+        if (args.length == 2) {
+            Pattern p = Pattern.compile("((?!GMT|UTC|UT)[a-zA-Z])*");
+            Matcher m = p.matcher(args[1]);
+
+            if (m.matches()) {
+                city = args[0] + " " + args[1];
+            } else {
+                city = args[0];
+                timeZoneId = args[1];
+            }
+        }
+
+        if (args.length == 1) {
+            city = args[0];
+        }
+
         return new String[]{city, timeZoneId};
     }
 
-    public static LocalTime determinateUserTime(String city, String timeZoneId) {
+    public static ZoneId determinateUserTimeZone(String city, String timeZoneId) {
         ZoneId zoneId;
 
         try {
@@ -75,7 +95,7 @@ public class Main {
             zoneId = ZoneId.of(determinateUserTimeZoneByCity(city));
         }
 
-        return LocalTime.now(zoneId);
+        return zoneId;
     }
 
     public static String determinateUserTimeZoneByCity(String city) {
@@ -91,13 +111,13 @@ public class Main {
 
 
     public static String determinePartOfDay(LocalTime timeNow) {
-        if (timeNow.compareTo(MORNING_START) > 0 && timeNow.compareTo(MORNING_END) <= 0) {
+        if (timeNow.compareTo(LocalTime.parse(MORNING_START)) > 0 && timeNow.compareTo(LocalTime.parse(MORNING_END)) <= 0) {
             return MORNING;
         }
-        if (timeNow.compareTo(AFTERNOON_START) > 0 && timeNow.compareTo(AFTERNOON_END) <= 0) {
+        if (timeNow.compareTo(LocalTime.parse(AFTERNOON_START)) > 0 && timeNow.compareTo(LocalTime.parse(AFTERNOON_END)) <= 0) {
             return AFTERNOON;
         }
-        if (timeNow.compareTo(EVENING_START) > 0 && timeNow.compareTo(EVENING_END) <= 0) {
+        if (timeNow.compareTo(LocalTime.parse(EVENING_START)) > 0 && timeNow.compareTo(LocalTime.parse(EVENING_END)) <= 0) {
             return EVENING;
         }
         return NIGHT;
