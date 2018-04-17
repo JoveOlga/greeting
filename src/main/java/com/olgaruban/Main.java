@@ -4,6 +4,7 @@ import java.io.*;
 import java.time.DateTimeException;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
@@ -111,13 +112,14 @@ public class Main {
 
 
     public static String determinePartOfDay(LocalTime timeNow) {
-        if (timeNow.compareTo(LocalTime.parse(MORNING_START)) > 0 && timeNow.compareTo(LocalTime.parse(MORNING_END)) <= 0) {
+        String timeString = timeNow.format(DateTimeFormatter.ISO_LOCAL_TIME);
+        if (timeString.compareTo(MORNING_START) > 0 && timeString.compareTo(MORNING_END) <= 0) {
             return MORNING;
         }
-        if (timeNow.compareTo(LocalTime.parse(AFTERNOON_START)) > 0 && timeNow.compareTo(LocalTime.parse(AFTERNOON_END)) <= 0) {
+        if (timeString.compareTo(AFTERNOON_START) > 0 && timeString.compareTo(AFTERNOON_END) <= 0) {
             return AFTERNOON;
         }
-        if (timeNow.compareTo(LocalTime.parse(EVENING_START)) > 0 && timeNow.compareTo(LocalTime.parse(EVENING_END)) <= 0) {
+        if (timeString.compareTo(EVENING_START) > 0 && timeString.compareTo(EVENING_END) <= 0) {
             return EVENING;
         }
         return NIGHT;

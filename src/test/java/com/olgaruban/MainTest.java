@@ -29,9 +29,17 @@ public class MainTest {
     @Test
     public void determinePartOfDay() {
         Assert.assertEquals(Main.NIGHT, Main.determinePartOfDay(LocalTime.of(6,0,0)));
+        Assert.assertEquals(Main.NIGHT, Main.determinePartOfDay(LocalTime.of(2,0,0)));
+        Assert.assertEquals(Main.NIGHT, Main.determinePartOfDay(LocalTime.of(5,0,0)));
         Assert.assertEquals(Main.MORNING, Main.determinePartOfDay(LocalTime.of(6,0,1)));
+        Assert.assertEquals(Main.MORNING, Main.determinePartOfDay(LocalTime.of(7,50,1)));
+        Assert.assertEquals(Main.MORNING, Main.determinePartOfDay(LocalTime.of(8,55,58)));
         Assert.assertEquals(Main.AFTERNOON, Main.determinePartOfDay(LocalTime.of(11,25,0)));
+        Assert.assertEquals(Main.AFTERNOON, Main.determinePartOfDay(LocalTime.of(15,25,45)));
+        Assert.assertEquals(Main.AFTERNOON, Main.determinePartOfDay(LocalTime.of(18,58,35)));
         Assert.assertEquals(Main.EVENING, Main.determinePartOfDay(LocalTime.of(19,1,0)));
+        Assert.assertEquals(Main.EVENING, Main.determinePartOfDay(LocalTime.of(20,1,0)));
+        Assert.assertEquals(Main.EVENING, Main.determinePartOfDay(LocalTime.of(22,59,12)));
     }
 
     @Test
