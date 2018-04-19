@@ -4,7 +4,6 @@ import java.io.*;
 import java.time.DateTimeException;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
@@ -13,10 +12,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Main {
-    public final static String MORNING_START = "06:00:00";
-    public final static String MORNING_END_AFTERNOON_START = "09:00:00";
-    public final static String AFTERNOON_END_EVENING_START = "19:00:00";
-    public final static String EVENING_END = "23:00:00";
+    public final static LocalTime MORNING_START = LocalTime.of(6,0,0);
+    public final static LocalTime AFTERNOON_START = LocalTime.of(9,0,0);
+    public final static LocalTime EVENING_START = LocalTime.of(19,0,0);
+    public final static LocalTime NIGHT_START = LocalTime.of(23,0,0);
 
     public final static String MORNING = "morning";
     public final static String AFTERNOON = "afternoon";
@@ -108,14 +107,13 @@ public class Main {
 
 
     public static String determinePartOfDay(LocalTime timeNow) {
-        String timeString = timeNow.format(DateTimeFormatter.ISO_LOCAL_TIME);
-        if (timeString.compareTo(MORNING_START) > 0 && timeString.compareTo(MORNING_END_AFTERNOON_START) <= 0) {
+        if (timeNow.compareTo(MORNING_START) > 0 && timeNow.compareTo(AFTERNOON_START) <= 0) {
             return MORNING;
         }
-        if (timeString.compareTo(MORNING_END_AFTERNOON_START) > 0 && timeString.compareTo(AFTERNOON_END_EVENING_START) <= 0) {
+        if (timeNow.compareTo(AFTERNOON_START) > 0 && timeNow.compareTo(EVENING_START) <= 0) {
             return AFTERNOON;
         }
-        if (timeString.compareTo(AFTERNOON_END_EVENING_START) > 0 && timeString.compareTo(EVENING_END) <= 0) {
+        if (timeNow.compareTo(EVENING_START) > 0 && timeNow.compareTo(NIGHT_START) <= 0) {
             return EVENING;
         }
         return NIGHT;
