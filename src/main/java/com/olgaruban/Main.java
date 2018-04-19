@@ -14,12 +14,8 @@ import java.util.regex.Pattern;
 
 public class Main {
     public final static String MORNING_START = "06:00:00";
-    public final static String MORNING_END = "09:00:00";
-
-    public final static String AFTERNOON_START = "09:00:00";
-    public final static String AFTERNOON_END = "19:00:00";
-
-    public final static String EVENING_START = "19:00:00";
+    public final static String MORNING_END_AFTERNOON_START = "09:00:00";
+    public final static String AFTERNOON_END_EVENING_START = "19:00:00";
     public final static String EVENING_END = "23:00:00";
 
     public final static String MORNING = "morning";
@@ -113,13 +109,13 @@ public class Main {
 
     public static String determinePartOfDay(LocalTime timeNow) {
         String timeString = timeNow.format(DateTimeFormatter.ISO_LOCAL_TIME);
-        if (timeString.compareTo(MORNING_START) > 0 && timeString.compareTo(MORNING_END) <= 0) {
+        if (timeString.compareTo(MORNING_START) > 0 && timeString.compareTo(MORNING_END_AFTERNOON_START) <= 0) {
             return MORNING;
         }
-        if (timeString.compareTo(AFTERNOON_START) > 0 && timeString.compareTo(AFTERNOON_END) <= 0) {
+        if (timeString.compareTo(MORNING_END_AFTERNOON_START) > 0 && timeString.compareTo(AFTERNOON_END_EVENING_START) <= 0) {
             return AFTERNOON;
         }
-        if (timeString.compareTo(EVENING_START) > 0 && timeString.compareTo(EVENING_END) <= 0) {
+        if (timeString.compareTo(AFTERNOON_END_EVENING_START) > 0 && timeString.compareTo(EVENING_END) <= 0) {
             return EVENING;
         }
         return NIGHT;
